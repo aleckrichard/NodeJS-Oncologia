@@ -1,0 +1,47 @@
+@api = http://localhost:4000/products
+
+###
+GET {{api}}
+
+###
+POST {{api}}
+Content-Type: application/json
+
+{
+    "name": "Macbook Pro",
+    "description": "13 pulgadas intel",
+    "quantity": 8
+}
+
+###
+GET {{api}}/3
+
+###
+DELETE {{api}}/5
+
+###
+GET {{api}}/count
+
+###
+PUT {{api}}/8
+Content-Type: application/json
+
+{
+    "name": "Laptop MSI",
+    "description": "Tipo Gaming",
+    "quantity": 15
+}
+
+###
+POST http://localhost:4000/controls
+Content-Type: application/json
+
+{
+	"Run": 17357805,
+	"TipoControl": "Presencial",
+	"Observaciones": "Observaciones del control",
+	"FechaControl": "2022-05-06",
+	"EdadControl": 32,
+	"FechaRegistro": "2022-05-06 18:30:15",
+	"RunResponsable": "17357804"
+}

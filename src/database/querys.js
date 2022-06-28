@@ -1,0 +1,27 @@
+export const queries = {
+    getAllProducts: 'SELECT * FROM dbo.products',
+    addNewProduct: 'INSERT INTO dbo.products (name, description, quantity) VALUES (@name, @description, @quantity)',
+    getProductById: 'SELECT * FROM dbo.products WHERE id = @id',
+    deleteProduct: 'DELETE FROM dbo.products WHERE id = @id',
+    getTotalProducts: 'SELECT COUNT(*) FROM dbo.products',
+    updateProductById : 'UPDATE dbo.products SET name = @name, description = @description, quantity = @quantity WHERE id = @id',
+    getAllPatients : "SELECT c.IdCuidadosPaliativos, Fld_Rut AS RunSinDV, CONCAT(p.Fld_Nombres, ' ', p.Fld_PrimerApellido, ' ', p.Fld_SegundoApellido) AS Nombres, f.Fld_Ficha AS Ficha, CASE WHEN p.Fld_Fallecido = 0 THEN 'Fallecido/a' ELSE '' END AS EstadoFallecido, (SELECT COUNT(*) FROM Controles WHERE Run = c.Run) AS CantidadControles, DATEDIFF (DAY, c.FechaIpd, c.FechaIngreso ) AS DiasCorridos, c.* FROM PruebasAlex.dbo.CuidadosPaliativos c INNER JOIN PhoenixPaciente AS p ON c.Run = p.Fld_Rut INNER JOIN PhoenixFichaClinica AS f ON p.Fld_Numero = f.Fld_Paciente WHERE c.Estado IS NULL ORDER BY c.IdCuidadosPaliativos",
+    getPatientByRun: "SELECT Fld_Rut AS RunSinDV, CONCAT(Fld_Rut, '-', Fld_Dv) AS RunCompleto, CONCAT(p.Fld_Nombres, ' ', p.Fld_PrimerApellido, ' ', p.Fld_SegundoApellido) AS Nombres, f.Fld_Ficha AS Ficha, CASE WHEN p.Fld_Fallecido = 0 THEN 'Fallecido/a' ELSE '' END AS EstadoFallecido, CASE WHEN p.Fld_Sexo = 1 THEN 'AvatarMale.png' ELSE 'AvatarFemale.png' END AS Avatar, (SELECT COUNT(*) FROM Controles WHERE Run = c.Run) AS CantidadControles, DATEDIFF (DAY, c.FechaIpd, c.FechaIngreso ) AS DiasCorridos, c.* FROM PruebasAlex.dbo.CuidadosPaliativos c INNER JOIN PhoenixPaciente AS p ON c.Run = p.Fld_Rut INNER JOIN PhoenixFichaClinica AS f ON p.Fld_Numero = f.Fld_Paciente WHERE Fld_Rut = @runPatient AND c.Estado IS NULL ORDER BY IdCuidadosPaliativos",
+    getPatientPhoenixByRun : "SELECT top 1 Fld_Rut AS RunSinDV, CONCAT(Fld_Rut,'-', Fld_Dv) AS Run, f.Fld_Ficha AS Ficha, CONCAT(Fld_Nombres, ' ', Fld_PrimerApellido, ' ', Fld_SegundoApellido) AS Nombres,  FLOOR (DATEDIFF (DAY, Fld_FechaNacimiento, GetDate ()) / 365.25) AS Edad, CONVERT(varchar,Fld_FechaNacimiento, 103) AS FechaNacimiento, p.Fld_Direccion AS Domicilio FROM dbo.PhoenixPaciente AS p INNER JOIN PhoenixFichaClinica AS f ON f.Fld_Paciente = p.Fld_Numero WHERE p.Fld_Rut = @runPatient",
+    addNewPatient: "INSERT INTO dbo.CuidadosPaliativos (Run, EvaIngreso, PsIngreso, Conocimiento, PacientePresente, LugarIngreso, Diagnostico, Comite, EdadIngreso, FechaIpd, FechaSolicitudIngreso, FechaIngreso, MedicoIngreso, MedicoDerivador, AnalgesiaPrevia, UsuarioOncologico, Domicilio, Observaciones) VALUES (@Run, @EvaIngreso, @PsIngreso, @Conocimiento, @PacientePresente, @LugarIngreso, @Diagnostico, @Comite, @EdadIngreso, @FechaIPD, @FechaSolicitud, @FechaIngreso, @MedicoIngresa, @MedicoDeriva, @AnalgesiaPrevia, @UsuarioOncologico, @Domicilio, @Observaciones)",
+    getAllControls: "SELECT IdControl, Run, TipoControl, Observaciones,CONVERT(VARCHAR,FechaControl,103) AS FechaControl, EdadControl FROM dbo.Controles",
+    getAllControlsByRun: "SELECT IdControl, Run, TipoControl, Observaciones,CONVERT(VARCHAR,FechaControl,103) AS FechaControl, EdadControl FROM dbo.Controles WHERE Run = @runPatient",
+    getControlById: "SELECT IdControl, Run, TipoControl, Observaciones,CONVERT(VARCHAR,FechaControl,103) AS FechaControl, EdadControl FROM dbo.Controles WHERE IdControl = @idControl",
+    addNewControl: "INSERT INTO dbo.Controles (Run, TipoControl, Observaciones, FechaControl, EdadControl, FechaRegistro, RunResponsable) VALUES (@Run, @TipoControl, @Observaciones, @FechaControl, (SELECT TOP 1 FLOOR (DATEDIFF (DAY, Fld_FechaNacimiento, GetDate ()) / 365.25) AS Edad FROM dbo.PhoenixPaciente WHERE Fld_Rut = @Run), GETDATE(), @RunResponsable)",
+    deleteControl: "DELETE FROM dbo.Controles WHERE IdControl = @IdControl",
+    updatePatientByRun: "UPDATE dbo.CuidadosPaliativos SET EvaIngreso = @EvaIngreso, PsIngreso = @PsIngreso, Conocimiento = @Conocimiento, PacientePresente = @PacientePresente, LugarIngreso = @LugarIngreso, Diagnostico = @Diagnostico, Comite = @Comite, EdadIngreso = @EdadIngreso, FechaIpd = @FechaIpd, FechaSolicitudIngreso = @FechaSolicitud, FechaIngreso = @FechaIngreso, MedicoIngreso = @MedicoIngresa, MedicoDerivador = @MedicoDeriva, AnalgesiaPrevia = @AnalgesiaPrevia, UsuarioOncologico = @UsuarioOncologico, Domicilio = @Domicilio, Observaciones = @Observaciones WHERE Run = @runPatient",
+    updateControlById : "UPDATE dbo.Controles SET TipoControl = @TipoControl, Observaciones = @Observaciones, FechaControl = @FechaControl, EdadControl = @EdadControl, RunResponsable = @RunResponsable WHERE IdControl = @idControl",
+    validateUser: "SELECT id, run, [name], email, [password], IdState FROM dbo.users WHERE email = @email AND password = @password",
+
+    //Querys WebAPP
+    deletePatient: "DELETE FROM dbo.CuidadosPaliativos WHERE Run = @runPatient",
+    getAllDianosticos: "SELECT CodigoOrgano, DescripcionOrgano FROM dbo.Organos",
+    storeUser: "INSERT INTO dbo.users (run, [name], email, [password], IdState) VALUES (@RUn, @Name, @Email, @Password, 1)",
+    getUserbyEmail: "SELECT * FROM PruebasAlex.dbo.users WHERE email = @Email"
+
+}
