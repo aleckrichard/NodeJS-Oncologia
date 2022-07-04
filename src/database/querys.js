@@ -21,7 +21,12 @@ export const queries = {
     //Querys WebAPP
     deletePatient: "DELETE FROM dbo.CuidadosPaliativos WHERE Run = @runPatient",
     getAllDianosticos: "SELECT CodigoOrgano, DescripcionOrgano FROM dbo.Organos",
-    storeUser: "INSERT INTO dbo.users (run, [name], email, [password], IdState) VALUES (@RUn, @Name, @Email, @Password, 1)",
-    getUserbyEmail: "SELECT * FROM PruebasAlex.dbo.users WHERE email = @Email"
-
+    storeUser: "INSERT INTO dbo.users (run, [name], email, [password], IdState) VALUES (@Run, @Name, @Email, @Password, 1)",
+    getUserbyEmail: "SELECT * FROM PruebasAlex.dbo.users WHERE email = @Email",
+    getQuantityControls: "SELECT DISTINCT TipoControl, COUNT(IdControl) AS Cantidad FROM dbo.Controles GROUP BY TipoControl",
+    getTotalsDashboard: "SELECT COUNT(c.Run) AS Total, (SELECT COUNT(c1.Run) FROM dbo.CuidadosPaliativos AS c1 INNER JOIN dbo.PhoenixPaciente AS p1 ON c1.Run = p1.Fld_Rut WHERE p1.Fld_Sexo = 1) AS Hombres, (SELECT COUNT(c2.Run) FROM dbo.CuidadosPaliativos AS c2 INNER JOIN dbo.PhoenixPaciente AS p2 ON c2.Run = p2.Fld_Rut WHERE p2.Fld_Sexo = 2) AS Mujeres, (SELECT COUNT(IdControl) FROM dbo.Controles) AS CantidadControles FROM dbo.CuidadosPaliativos AS c INNER JOIN dbo.PhoenixPaciente AS p ON c.Run = p.Fld_Rut",
+    getLastControls: "SELECT TOP 10 IdControl, CONVERT(VARCHAR,FechaControl,103) AS FechaControl, CONCAT(p.Fld_Rut, '-', p.Fld_Dv) AS Run ,CONCAT(p.Fld_Nombres, ' ', p.Fld_PrimerApellido, ' ', p.Fld_SegundoApellido) AS Nombres, TipoControl, Observaciones, FechaRegistro FROM PruebasAlex.dbo.Controles AS c INNER JOIN dbo.PhoenixPaciente AS p ON c.Run = p.Fld_Rut ORDER BY c.FechaRegistro DESC",
+    getQuantityControlsByDate: "SELECT CONVERT(VARCHAR,FechaControl,103) AS FechaControl, COUNT(*) AS Cantidad FROM PruebasAlex.dbo.Controles GROUP BY FechaControl ORDER BY FechaControl ASC",
+    getAllUsers: "SELECT run, name, email, CASE WHEN Idstate = 1 THEN 'Activo/a' ELSE 'Inactivo' END AS estado FROM dbo.users",
+    updatePatientStateByRun: "UPDATE dbo.CuidadosPaliativos SET Estado = 'Alta' WHERE Run = @Run"
 }

@@ -5,17 +5,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt')
 
 
-export const index = async (req, res) => {
-    const pool = await getConnection();
-    const result = await pool.request().query(queries.getAllPatients)
-    const resultDiagnosticos = await pool.request().query(queries.getAllDianosticos)
 
-    const data = result.recordset
-    const dataDiagnosticos = resultDiagnosticos.recordset
-
-    // res.render('pages/customers', {'data': data})
- res.render('customers', {'data': data, 'dataDiagnosticos': dataDiagnosticos})
-}
 
 export const profile = async (req, res) => {
     const { runPatient } = req.params;
@@ -32,7 +22,7 @@ export const profile = async (req, res) => {
     const dataControls = resultControls.recordset
     const data = result.recordset[0]
     console.log(dataControls)
-    // res.render('pages/customers', {'data': data})
+    // res.render('pages/patients', {'data': data})
  res.render('profile', {'data': data, 'dataControls': dataControls})
 }
 
@@ -139,7 +129,7 @@ export const deletePatient = async (req, res) => {
     .request()
     .input('runPatient', runPatient)
     .query(queries.deletePatient)
-    res.redirect('/')
+    res.redirect('/patients')
 }
 
 export const createNewControl = async (req, res) => {
@@ -181,13 +171,23 @@ export const createNewControl = async (req, res) => {
 
 
 export const registerUser = async (req, res) => {
-    res.render('register')    
+    const pool = await getConnection();
+    const resultUsers = await pool.request().query(queries.getAllUsers)
+
+    const datadataUsers = resultUsers.recordset
+
+    if(req.session.loggedin == true){
+        res.render('register', {'dataUsers': datadataUsers, 'error': ''})
+    }else{
+        res.redirect('/login')
+    }
+
+    //  res.render('register', {'error': ''}) 
 }
 
 export const storeUser = async (req, res) => {
     const data = req.body
     const pool = await getConnection();
-    //const { run, name, password, email} = req.body
     const passwordHash = await bcrypt.hash(data.password, 12)
     
     if(data.run == null || 
@@ -208,7 +208,7 @@ export const storeUser = async (req, res) => {
 
     if (quantityUser > 0) {
         console.log(quantityUser)
-        res.render('register', {'data': 1})
+        res.render('register', {'error': 'El usuario ya existe'})
     } else {
     try {
         await pool.request()
@@ -218,7 +218,7 @@ export const storeUser = async (req, res) => {
         .input('Password', passwordHash)
         .query(queries.storeUser)
     
-        res.redirect('/register')  
+        res.redirect('/login')  
 
 } catch (error) {
     res.status(500)
@@ -228,9 +228,13 @@ export const storeUser = async (req, res) => {
 }
 
 export const login = async (req, res) =>{
-    res.render('login', {'error': ''}) 
+    if(req.session.loggedin != true){
+        res.render('login', {'error': ''}) 
+    }else{
+        res.redirect('/')
+    }
+    
 }
-
 
 export const auth = async (req, res) =>{
     const data = req.body
@@ -253,17 +257,67 @@ export const auth = async (req, res) =>{
                 res.redirect('/')
             }
         })
-
-        
-        
-        ///res.render('login', {'error': ''})
     } else {
-        res.render('login', {'error': 'No existe usuario'})
+        res.render('login', {'error': 'No existe el usuario'})
     }
-
-    //console.log(req.body)
-
 }
 
+export const logout = async(req, res) => {
+    if(req.session.loggedin == true){
+        req.session.destroy()
+    }
+        res.redirect('/login')
+}
 
+export const index = async (req, res) => {
+    const pool = await getConnection();
+    const result = await pool.request().query(queries.getAllPatients)
+    const resultDiagnosticos = await pool.request().query(queries.getAllDianosticos)
+    const resultTotalsDashboard = await pool.request().query(queries.getTotalsDashboard)
+    const resultQuantityControls = await pool.request().query(queries.getQuantityControls)
+    const resultLastControls = await pool.request().query(queries.getLastControls)
+    const resultQuantityControlsByDate = await pool.request().query(queries.getQuantityControlsByDate)
+
+    const data = result.recordset
+    const dataDiagnosticos = resultDiagnosticos.recordset
+    const dataTotalsDashboard = resultTotalsDashboard.recordset[0]
+    const dataQuantityControls =  resultQuantityControls.recordset
+    const dataLastControls =  resultLastControls.recordset
+    const dataQuantityControlsByDate =  resultQuantityControlsByDate.recordset
+    console.log(dataQuantityControlsByDate)
+
+    if(req.session.loggedin == true){
+        res.render('home', {'data': data, 'dataDiagnosticos': dataDiagnosticos, 'dataTotalsDashboard': dataTotalsDashboard, 'dataQuantityControls': dataQuantityControls, 'dataLastControls': dataLastControls, 'dataQuantityControlsByDate': dataQuantityControlsByDate, 'userName': req.session.name})
+    }else{
+        res.redirect('/login')
+    }
+}
+
+export const patients = async (req, res) => {
+    const pool = await getConnection();
+    const result = await pool.request().query(queries.getAllPatients)
+    const resultDiagnosticos = await pool.request().query(queries.getAllDianosticos)
+    const resultTotalsDashboard = await pool.request().query(queries.getTotalsDashboard)
+
+    const data = result.recordset
+    const dataDiagnosticos = resultDiagnosticos.recordset
+    const dataTotalsDashboard = resultTotalsDashboard.recordset[0]
+    console.log(dataTotalsDashboard)
+
+    if(req.session.loggedin == true){
+        res.render('patients', {'data': data, 'dataDiagnosticos': dataDiagnosticos, 'dataTotalsDashboard': dataTotalsDashboard, 'userName': req.session.name})
+    }else{
+        res.redirect('/login')
+    }
+}
+
+export const updatePatientStateByRun = async (req, res) => {
+    const { runPatient } = req.params;
+    const pool = await getConnection();
+    const result = await pool
+    .request()
+    .input('Run', runPatient)
+    .query(queries.updatePatientStateByRun)
+    res.redirect('/patients')
+}
 
