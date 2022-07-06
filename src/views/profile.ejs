@@ -29,15 +29,15 @@
                 <div class="tab-content" id="myTabContent">
                     <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
                         <div class="row">
-                            <div class="col-md-6"><label class="labels">Ficha</label><input type="text" class="form-control" placeholder="<%= data.Ficha %>" readonly></div>
-                            <div class="col-md-6"><label class="labels">Controles</label><input type="text" class="form-control" readonly placeholder="<%= data.CantidadControles %>"></div>
+                            <div class="col-md-6"><label class="labels">Ficha</label><input type="text" class="form-control" value="<%= data.Ficha %>" readonly></div>
+                            <div class="col-md-6"><label class="labels">Controles</label><input type="text" class="form-control" readonly value="<%= data.CantidadControles %>"></div>
                         </div>
                         <div class="row mt-3">
-                            <div class="col-md-12"><label class="labels">Eva Ingreso</label><input type="text" class="form-control" placeholder="<%= data.EvaIngreso %>" readonly></div>
-                            <div class="col-md-12"><label class="labels">Ps Ingreso</label><input type="text" class="form-control" placeholder="<%= data.PsIngreso %>" readonly></div>
-                            <div class="col-md-12"><label class="labels">EdadIngreso</label><input type="text" class="form-control" placeholder="<%= data.EdadIngreso %>" readonly></div>
-                            <div class="col-md-12"><label class="labels">Diagnostico</label><input type="text" class="form-control" placeholder="<%= data.Diagnostico %>" readonly></div>
-                            <div class="col-md-12"><label class="labels">Observaciones</label><input type="text" class="form-control" placeholder="<%= data.Observaciones %>" readonly></div>
+                            <div class="col-md-12"><label class="labels">Eva Ingreso</label><input type="text" class="form-control" value="<%= data.EvaIngreso %>" readonly></div>
+                            <div class="col-md-12"><label class="labels">Ps Ingreso</label><input type="text" class="form-control" value="<%= data.PsIngreso %>" readonly></div>
+                            <div class="col-md-12"><label class="labels">EdadIngreso</label><input type="text" class="form-control" value="<%= data.EdadIngreso %>" readonly></div>
+                            <div class="col-md-12"><label class="labels">Diagnostico</label><input type="text" class="form-control" value="<%= data.Diagnostico %>" readonly></div>
+                            <div class="col-md-12"><label class="labels">Observaciones</label><textarea" class="form-control" readonly><%= data.Observaciones %></textarea></div>
                         </div>
                     </div>
                     <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" tabindex="0">

@@ -39,6 +39,23 @@ export const validatePatient = async (req, res) => {
         res.send(data)
     }else{
         console.log("No ha datos")
+    res.json({message: 'resultado'})
+    }
+    
+}
+
+export const searchPatient = async (req, res) => {
+    const { searchString } = req.params;
+    const pool = await getConnection();
+    const result = await pool
+    .request()
+    .input('Busqueda', searchString)
+    .query(queries.searchPatient)
+    const data = result.recordset
+    if (data != "") {
+        res.send(data)
+    }else{
+        console.log("No ha datos")
     res.json({message: 'error'})
     }
     
@@ -123,11 +140,11 @@ export const addNewPatient = async (req, res) => {
 
 
 export const deletePatient = async (req, res) => {
-    const { runPatient } = req.params;
+    const { IdCuidadosPaliativos } = req.params;
     const pool = await getConnection();
     const result = await pool
     .request()
-    .input('runPatient', runPatient)
+    .input('IdCuidadosPaliativos', IdCuidadosPaliativos)
     .query(queries.deletePatient)
     res.redirect('/patients')
 }
@@ -162,11 +179,45 @@ export const createNewControl = async (req, res) => {
         .query(queries.addNewControl)
     
         console.log(runControl, tipoControl, observacionControl, fechaControl, runResponsable)
-        res.redirect('/')
+        res.redirect('/patients')
     } catch (error) {
         res.status(500)
         res.send(error.message)
     }
+}
+
+export const patientDischarge = async (req, res) => {
+    console.log(req.body)
+    const { runAltaPaciente, tipoEstado, motivoAlta } = req.body
+    
+    if(runAltaPaciente == null || tipoEstado == null || motivoAlta == null){
+        return res.status(400).json({message: 'Bad Request: Please fill all fields'})
+    }else{
+    //Enviar datos a la BD
+    try {
+        const pool = await getConnection()
+
+        if (tipoEstado != 2) {
+            //ACTUALIZA COLUMNA Estado 1 o 0
+            await pool.request()
+            .input('Run', sql.Int, runAltaPaciente)
+            .input('tipoEstado', sql.Int, tipoEstado)
+            .input('motivoAlta', sql.VarChar, motivoAlta)
+            .query(queries.setpatientDischarge)     
+            res.redirect('/patients')
+        } else {
+            //ACTUALIZA COLUMNA Fallecido A 1
+            await pool.request()
+            .input('Run', sql.Int, runAltaPaciente)
+            .query(queries.setpatientDeceased)       
+            res.redirect('/patients')
+        }
+    } catch (error) {
+        res.status(500)
+        res.send(error.message)
+    }
+    }
+
 }
 
 
@@ -271,23 +322,18 @@ export const logout = async(req, res) => {
 
 export const index = async (req, res) => {
     const pool = await getConnection();
-    const result = await pool.request().query(queries.getAllPatients)
-    const resultDiagnosticos = await pool.request().query(queries.getAllDianosticos)
     const resultTotalsDashboard = await pool.request().query(queries.getTotalsDashboard)
     const resultQuantityControls = await pool.request().query(queries.getQuantityControls)
     const resultLastControls = await pool.request().query(queries.getLastControls)
     const resultQuantityControlsByDate = await pool.request().query(queries.getQuantityControlsByDate)
 
-    const data = result.recordset
-    const dataDiagnosticos = resultDiagnosticos.recordset
     const dataTotalsDashboard = resultTotalsDashboard.recordset[0]
     const dataQuantityControls =  resultQuantityControls.recordset
     const dataLastControls =  resultLastControls.recordset
     const dataQuantityControlsByDate =  resultQuantityControlsByDate.recordset
-    console.log(dataQuantityControlsByDate)
 
     if(req.session.loggedin == true){
-        res.render('home', {'data': data, 'dataDiagnosticos': dataDiagnosticos, 'dataTotalsDashboard': dataTotalsDashboard, 'dataQuantityControls': dataQuantityControls, 'dataLastControls': dataLastControls, 'dataQuantityControlsByDate': dataQuantityControlsByDate, 'userName': req.session.name})
+        res.render('home', {'dataTotalsDashboard': dataTotalsDashboard, 'dataQuantityControls': dataQuantityControls, 'dataLastControls': dataLastControls, 'dataQuantityControlsByDate': dataQuantityControlsByDate, 'userName': req.session.name})
     }else{
         res.redirect('/login')
     }
@@ -297,15 +343,12 @@ export const patients = async (req, res) => {
     const pool = await getConnection();
     const result = await pool.request().query(queries.getAllPatients)
     const resultDiagnosticos = await pool.request().query(queries.getAllDianosticos)
-    const resultTotalsDashboard = await pool.request().query(queries.getTotalsDashboard)
 
     const data = result.recordset
     const dataDiagnosticos = resultDiagnosticos.recordset
-    const dataTotalsDashboard = resultTotalsDashboard.recordset[0]
-    console.log(dataTotalsDashboard)
 
     if(req.session.loggedin == true){
-        res.render('patients', {'data': data, 'dataDiagnosticos': dataDiagnosticos, 'dataTotalsDashboard': dataTotalsDashboard, 'userName': req.session.name})
+        res.render('patients', {'data': data, 'dataDiagnosticos': dataDiagnosticos, 'userName': req.session.name})
     }else{
         res.redirect('/login')
     }

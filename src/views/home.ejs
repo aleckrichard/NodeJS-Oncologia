@@ -1,5 +1,6 @@
 <%- include('./partials/_header'); %>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js" integrity="sha512-sW/w8s4RWTdFFSduOTGtk4isV1+190E/GghVffMA9XczdJ2MDzSzLEubKAs5h0wzgSJOQTRYyaz73L3d6RtJSg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
     <div class="pt-3 pb-2 mb-3 border-bottom">
         <h3 class="text-center">Bienvenido <%= userName %> al Sistema de Cuidados Paliativos</h3>
@@ -101,6 +102,7 @@
                     <th>Nombres</th>
                     <th>Tipo</th>
                     <th>Observaciones</th>
+                    <th>Mas Información</th>
                 </tr>
             </thead>
         <tbody>
@@ -113,6 +115,7 @@
                       <td><%= dataLastControls[i].Nombres %></td>
                       <td><%= dataLastControls[i].TipoControl %></td>
                       <td><%= dataLastControls[i].Observaciones %></td>
+                      <td><a href="profile/<%= dataLastControls[i].RunSinDv %>" class="btn btn-primary btn-sm">Ver Detalle</a>
                     </tr>
                     <% } %>
             <%}%>

@@ -24,7 +24,8 @@
                 <th>Ps Ingreso</th>
                 <th>Edad Ingreso</th>
                 <th>Diagnostico</th>
-                <th>Observaciones</th>
+                <th>Estado</th>
+                <th>Fallecido</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -32,7 +33,7 @@
         <% if(data) { %>
             <% for(var i=0; i < data.length; i++) { %>
                 <tr>
-                  <td><%= data[i].RunSinDV %></td>
+                  <td><%= data[i].Run %></td>
                   <td><%= data[i].Ficha %></td>
                   <td><%= data[i].Nombres %></td>
                   <td><%= data[i].CantidadControles %></td>
@@ -41,15 +42,26 @@
                   <td><%= data[i].PsIngreso %></td>
                   <td><%= data[i].EdadIngreso %></td>
                   <td><%= data[i].Diagnostico %></td>
-                  <td><%= data[i].Observaciones %></td>
+                  <% if (data[i].Estado == 0) {%>
+                    <td><span class="badge bg-warning  text-dark">En tratamiento</span></td>          
+                <%} else { %>
+                    <td><span class="badge bg-success">De Alta</span></td>
+                    <%}%>                                  
+                  
+                    <% if (data[i].EstadoFallecido == "Fallecido") {%>
+                        <td><i class="text-danger fa-solid fa-cross"></i></td>          
+                    <%} else { %>
+                        <td></td>
+                        <%}%>                
+
                   <td><a href="profile/<%= data[i].RunSinDV %>" class="btn btn-primary btn-sm"><i class="fa-solid fa-user"></i></a>
-                    <button type="button" class="btn btn-warning btn-sm" onclick="abrirModal('<%= data[i].RunSinDV %>','<%= data[i].Nombres %>')">
+                    <button type="button" class="btn btn-info btn-sm" onclick="modalAtenderPaciente('<%= data[i].RunSinDV %>','<%= data[i].Nombres %>')">
                         <i class="fa-solid fa-user-clock"></i>
                       </button>
-                      <button type="button" class="btn btn-info btn-sm" onclick="modalAltaPaciente('<%= data[i].RunSinDV %>','<%= data[i].Nombres %>')">
-                        <i class="fa-solid fa-user-check"></i>
+                      <button type="button" class="btn btn-warning btn-sm" onclick="modalAltaPaciente('<%= data[i].RunSinDV %>','<%= data[i].Nombres %>')">
+                        <i class="fa-solid fa-user-gear"></i>
                     </button>
-                      <button type="button" class="btn btn-danger btn-sm" onclick="modalEliminar('<%= data[i].RunSinDV %>', '<%= data[i].Nombres %>')">
+                      <button type="button" class="btn btn-danger btn-sm" onclick="modalEliminar('<%= data[i].IdCuidadosPaliativos %>','<%= data[i].RunSinDV %>', '<%= data[i].Nombres %>')">
                           <i class="fa-solid fa-user-xmark"></i>
                         </button>
                 </td>
@@ -132,7 +144,7 @@
                         <option value="">Seleccione Diagnóstico</option>
                         <% if(dataDiagnosticos) { %>
                             <% for(var i=0; i < dataDiagnosticos.length; i++) { %>
-                                <option value="<%= dataDiagnosticos[i].CodigoOrgano %>"><%= dataDiagnosticos[i].DescripcionOrgano %></option>
+                                <option value="<%= dataDiagnosticos[i].DescripcionOrgano %>"><%= dataDiagnosticos[i].DescripcionOrgano %></option>
                                 <% } %>
                         <%}%>
                     </select>
@@ -179,41 +191,49 @@
     </div>
   </div>
 
-<!-- Modal Controles -->
-<div class="modal fade" id="modalAtenderPaciente" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- Modal Dar de Alta Paciente -->
+<div class="modal fade" id="modalAltaPaciente" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Agregar Nuevo Control </h5> <br>
+                <h5 class="modal-title" id="exampleModalLabel">Actualizar Estado Paciente </h5> <br>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="/controls" method="post" class="row g-3">
+                <form action="/patientDischarge" method="post" class="row g-3">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1" class="form-label">Rut</label>
+                        <input type="text" name="runAltaPaciente" id="runAltaPaciente" class="form-control" readonly>
+                    </div>
                     <div class="form-group">
                         <label for="exampleInputEmail1" class="form-label">Nombres</label>
-                        <input type="text" name="nombreControl" id="nombreControl" class="form-control" readonly>
+                        <input type="text" id="nombreAltaPaciente" class="form-control" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="exampleInputEmail1" class="form-label">Tipo de Control</label>
-                        <select name="tipoControl" id="tipoControl" class="form-control" required>
+                        <label for="exampleInputEmail1" class="form-label">Tipo de Estado</label>
+                        <select name="tipoEstado" id="tipoEstado" class="form-control" required>
                             <option value="">Seleccione</option>
-                            <option>Presencial</option>
-                            <option>Visita Sala</option>
-                            <option>Visita Domiciliaria</option>
-                            <option>Control Telefónico</option>
-                            <option>Telemedicina</option>
+                            <option value="0">En Tratamiento</option>
+                            <option value="1">Alta</option>
+                            <option value="2">Fallecido</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label for="exampleInputEmail1" class="form-label">Fecha del Control</label>
-                        <input type="date" name="fechaControl" id="fechaControl" class="form-control" required>
+                    <div class="form-group motivoAlta">
+                        <label for="exampleInputEmail1" class="form-label">Motivo de Alta</label>
+                        <select name="motivoAlta" id="motivoAlta" class="form-control" required>
+                            <option value="">Seleccione</option>
+                            <option>Fallecimiento</option>
+                            <option>Criterios de exclusion por protocolo</option>
+                            <option>Traslado</option>
+                            <option>Alta voluntaria o solicitada</option>
+                            <option>Cambio de prevision</option>
+                            <option value="Otro">Otro</option>
+                        </select>
                     </div>
-                    <div class="form-group">
-                        <label for="exampleInputEmail1" class="form-label">Observaciones</label>
-                        <textarea name="observacionControl" id="observacionControl" class="form-control" required></textarea>
+                    <div class="form-group observacionAlta">
+                        <label for="exampleInputEmail1" class="form-label">Otro Motivo</label>
+                        <textarea name="observacionAlta" id="observacionAlta" class="form-control" required></textarea>
                     </div>
-                    <input type="text" name="runControl" id="runControl" class="form-control" hidden>
-                    <input type="text" name="runResponsable" id="runResponsable" class="form-control" value="17357806" hidden>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -243,48 +263,74 @@
 </div>
 </div>
 
-<!-- Modal Dar de Alta Paciente -->
-<div class="modal fade" id="modalAltaPaciente" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- Modal Control Paciente -->
+<div class="modal fade" id="modalAtenderPaciente" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog mondal-danger">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Dar de Alta Paciente </h5> <br>
+                <h5 class="modal-title">Agregar Control </h5> <br>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p id="mensajeAltaPaciente"></p>
+                <form action="/controls" method="post" class="row g-3">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1" class="form-label">Nombres</label>
+                        <input type="text" name="nombreControl" id="nombreControl" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1" class="form-label">Tipo de Control</label>
+                        <select name="tipoControl" id="tipoControl" class="form-control" required>
+                            <option value="">Seleccione</option>
+                            <option>Presencial</option>
+                            <option>Visita Sala</option>
+                            <option>Visita Domiciliaria</option>
+                            <option>Control Telefónico</option>
+                            <option>Telemedicina</option>
+                            <option>Visita Urgencia</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1" class="form-label">Fecha del Control</label>
+                        <input type="date" name="fechaControl" id="fechaControl" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1" class="form-label">Observaciones</label>
+                        <textarea name="observacionControl" id="observacionControl" class="form-control" required></textarea>
+                    </div>
+                    <input type="text" name="runControl" id="runControl" class="form-control" hidden>
+                    <input type="text" name="runResponsable" id="runResponsable" class="form-control" value="17357806" hidden>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <a href="" class="btn btn-danger" id="linkAltaPaciente">Guardar</a>
+                <button type="submit" class="btn btn-danger">Guardar</button>
             </div>
+            </form>
         </div>
-    </div>
 </div>
 </div>
 
 <script>
-        function abrirModal(runPaciente, nombrePaciente){
+function modalAtenderPaciente(runPaciente, nombrePaciente){
         $("#nombreControl").val(nombrePaciente);
         $("#runControl").val(runPaciente);
         $('#modalAtenderPaciente').modal('show');
 }
 
-function modalEliminar(runPaciente, nombrePaciente){
+function modalAltaPaciente(runPaciente, nombrePaciente){
+        $("#nombreAltaPaciente").val(nombrePaciente);
+        $("#runAltaPaciente").val(runPaciente);
+        $('#modalAltaPaciente').modal('show');
+}
+
+function modalEliminar(IdCuidadosPaliativos, runPaciente, nombrePaciente){
         $("#mensajeEliminarPaciente").html('¿Estás seguro que desea eliminar el paciente: <b>'+runPaciente + ' ' + nombrePaciente + '</b>');
-        let link = "deletePatient/"+runPaciente
+        let link = "deletePatient/"+IdCuidadosPaliativos
         $("#linkEliminarPaciente").attr("href", link);
         $('#modalEliminarPaciente').modal('show');
 }
-
-function modalAltaPaciente(runPaciente, nombrePaciente){
-        $("#mensajeAltaPaciente").html('¿Estás seguro que desea dar de Alta al paciente: <b>'+runPaciente + ' ' + nombrePaciente + '</b>');
-        let link = "updateStatePatient/"+runPaciente
-        $("#linkAltaPaciente").attr("href", link);
-        $('#modalAltaPaciente').modal('show');
-}
 </script>
 
-  <script>
+<script>
     $(document).ready(function(){        
         $('#resultado').hide()
         $('.divDatos').hide()
@@ -327,10 +373,55 @@ function modalAltaPaciente(runPaciente, nombrePaciente){
     </script>
 
 <script>
+    $(document).ready(function(){   
+        $('.observacionAlta, .motivoAlta').hide()
+        $('#observacionAlta').prop('required', false);
+
+        $("#tipoEstado").change(function(){
+            let tipoEstado =  $("#tipoEstado").children("option:selected").val();
+
+            //Estados
+            // 0 = En tratamiento
+            // 1 = De Alta
+            // 2 = Fallecido
+
+            if (tipoEstado == 1) {
+                $('.motivoAlta').show()
+                $("#motivoAlta").change(function(){
+            let motivo =  $("#motivoAlta").children("option:selected").val();
+
+            if (motivo == 'Otro') {
+                $('#observacionAlta').prop('required', true);
+                $('#motivoAlta').prop('required', false);       
+                $("#observacionAlta").attr("name", "motivoAlta");  
+                $("#motivoAlta").attr("name", "");             
+                $('.observacionAlta').show()
+            } else {
+                $('#observacionAlta').prop('required', false);
+                $('#motivoAlta').prop('required', true);       
+                $("#observacionAlta").attr("name", "");  
+                $("#motivoAlta").attr("name", "motivoAlta");             
+                $('.observacionAlta').hide()
+            }
+        });
+            } else {
+                $('.motivoAlta, .observacionAlta').hide()
+                $('#observacionAlta, #motivoAlta').prop('required', false);
+                $('#motivoAlta, #observacionAlta').val(""); 
+            }
+        });
+
+
+    });
+
+</script>
+
+<script>
     $(document).ready(function () {
-$('#example').DataTable({
+$('#example').DataTable({    
+    order: [[2, 'asc']],
   "columnDefs": [
-    { "width": "15%", "targets": 10 }
+    { "width": "15%", "targets": 11 }
   ],
   "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"

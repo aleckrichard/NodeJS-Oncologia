@@ -3,7 +3,6 @@ import config from './config'
 import cors from 'cors'
 import path from 'path'
 import session from 'express-session'
-
 // import productsRoutes from './routes/products.routes'
 import productsRoutes from './routes/patients.routes'
 

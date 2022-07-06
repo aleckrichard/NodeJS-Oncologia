@@ -1,6 +1,7 @@
 import {Router} from 'express'
 
-import { index, addNewPatient, deletePatient, profile, validatePatient, createNewControl, registerUser, storeUser, auth, login, logout, patients, updatePatientStateByRun } from '../controllers/patients.controller'
+const axios = require('axios').default;
+import { index, addNewPatient, deletePatient, profile, validatePatient, createNewControl, registerUser, storeUser, auth, login, logout, patients, updatePatientStateByRun, searchPatient, patientDischarge } from '../controllers/patients.controller'
 const router = Router()
 
 
@@ -8,8 +9,9 @@ router.get('/', index)
 router.get('/patients', patients)
 router.get('/profile/:runPatient', profile)
 router.get('/validatePatient/:runPatient', validatePatient)
+router.get('/searchPatient/:searchString', searchPatient)
 router.post('/addNewPatient', addNewPatient)
-router.get('/deletePatient/:runPatient', deletePatient)
+router.get('/deletePatient/:IdCuidadosPaliativos', deletePatient)
 router.get('/updateStatePatient/:runPatient', updatePatientStateByRun)
 router.post('/controls', createNewControl)
 router.get('/register', registerUser)
@@ -17,15 +19,18 @@ router.post('/register', storeUser)
 router.get('/login', login)
 router.get('/logout', logout)
 router.post('/login', auth)
-router.get('/login2', (req, res) =>{
-    res.render('login2')
-})
 router.get('/register', registerUser)
-
 router.post('/register', storeUser)
-
-router.get('/home', (req, res) =>{
-    res.render('home')
+router.post('/patientDischarge', patientDischarge)
+router.get('/test', (req, res) =>{
+    //axios.get('https://gorest.co.in/public/v2/users')    
+    axios.get('http://10.8.152.170/api2/api/Paciente')
+    .then(resp => {
+    //res.send(resp.data)
+    res.render('apiTest', {'data': resp.data})
+    console.log(resp.data);
+});
 })
+
 
 export default router
