@@ -6,8 +6,9 @@ const dbSettings = {
     password: config.dbPassword,
     server: config.dbServer,
     database: config.dbDatabase,
+    requestTimeout: 300000,
     options: {
-        encrypt: false,
+        encrypt: true,
         trustServerCertificate: true,
     }
 }
