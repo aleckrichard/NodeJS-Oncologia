@@ -1,23 +1,25 @@
-import {Router} from 'express'
+import { Router } from 'express'
 
 const axios = require('axios').default;
-import { index, 
-    addNewPatient, 
-    profile, 
-    validatePatient, 
-    createNewControl, 
-    registerUser, 
-    storeUser, 
-    auth, 
-    login, 
-    logout, 
-    patients, 
+import {
+    index,
+    addNewPatient,
+    profile,
+    validatePatient,
+    createNewControl,
+    registerUser,
+    storeUser,
+    auth,
+    login,
+    logout,
+    patients,
     updatePatientStateByRun,
-    searchPatient, 
+    searchPatient,
     patientDischarge,
     deleteUser,
     updateUser,
-    reports } from '../controllers/patients.controller'
+    reports
+} from '../controllers/patients.controller'
 const router = Router()
 
 

@@ -1,29 +1,28 @@
 import { get } from 'express/lib/request'
 import { send } from 'process'
-import {getConnection, sql, queries} from '../database'
+import { getConnection, sql, queries } from '../database'
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt')
-
-
-
 
 export const profile = async (req, res) => {
     const { runPatient } = req.params;
     const pool = await getConnection();
     const result = await pool
-    .request()
-    .input('runPatient', runPatient)
-    .query(queries.getPatientByRun)
+        .request()
+        .input('runPatient', runPatient)
+        .query(queries.getPatientByRun)
 
     const resultControls = await pool.request()
-    .input('runPatient', runPatient)
-    .query(queries.getAllControlsByRun)
+        .input('runPatient', runPatient)
+        .query(queries.getAllControlsByRun)
 
     const dataControls = resultControls.recordset
     const data = result.recordset[0]
     // res.render('pages/patients', {'data': data})
- res.render('profile', {'data': data, 'dataControls': dataControls,
- 'dataUser': {'userName': req.session.name, 'runResponsable': req.session.runResponsable}})
+    res.render('profile', {
+        'data': data, 'dataControls': dataControls,
+        'dataUser': { 'userName': req.session.name, 'runResponsable': req.session.runResponsable }
+    })
 }
 
 export const validatePatient = async (req, res) => {
@@ -31,63 +30,63 @@ export const validatePatient = async (req, res) => {
     const pool = await getConnection();
     try {
         const result = await pool
-        .request()
-        .input('runPatient', runPatient)
-        .query(queries.getPatientPhoenixByRun)
+            .request()
+            .input('runPatient', runPatient)
+            .query(queries.getPatientPhoenixByRun)
         const data = result.recordset[0]
         if (data) {
             console.log(data)
             res.send(data)
-        }else{
+        } else {
             console.log("No hay datos")
-        res.json({message: 'error'})
+            res.json({ message: 'error' })
         }
-    } catch (error) {        
+    } catch (error) {
         res.status(500)
         res.redirect('/patients')
     }
-    
+
 }
 
 export const searchPatient = async (req, res) => {
     const { searchString } = req.params;
     const pool = await getConnection();
     const result = await pool
-    .request()
-    .input('Busqueda', searchString)
-    .query(queries.searchPatient)
+        .request()
+        .input('Busqueda', searchString)
+        .query(queries.searchPatient)
     const data = result.recordset
     if (data != "") {
         res.send(data)
-    }else{
+    } else {
         console.log("No ha datos")
-    res.json({message: 'error'})
+        res.json({ message: 'error' })
     }
-    
+
 }
 
 export const addNewPatient = async (req, res) => {
     const { Run
-    , EdadIngreso
-    , FechaIPD
-    , FechaSolicitud
-    , FechaIngreso
-    , EvaIngreso
-    , PsIngreso
-    , Diagnostico
-    , MedicoDeriva
-    , MedicoIngresa
-    , PacientePresente
-    , Conocimiento
-    , Comite
-    , AnalgesiaPrevia
-    , LugarIngreso
-    , UsuarioOncologico
-    , Domicilio
-    , Observaciones } = req.body
+        , EdadIngreso
+        , FechaIPD
+        , FechaSolicitud
+        , FechaIngreso
+        , EvaIngreso
+        , PsIngreso
+        , Diagnostico
+        , MedicoDeriva
+        , MedicoIngresa
+        , PacientePresente
+        , Conocimiento
+        , Comite
+        , AnalgesiaPrevia
+        , LugarIngreso
+        , UsuarioOncologico
+        , Domicilio
+        , Observaciones } = req.body
     //let { quantity } = req.body
-    
-    if(Run == null || 
+
+    if (Run == null ||
         EdadIngreso == null
         || FechaIPD == null
         || FechaSolicitud == null
@@ -105,8 +104,8 @@ export const addNewPatient = async (req, res) => {
         || UsuarioOncologico == null
         || Domicilio == null
         || Observaciones == null
-        ){
-        return res.status(400).json({message: 'Bad Request: Please fill all fields'})
+    ) {
+        return res.status(400).json({ message: 'Bad Request: Please fill all fields' })
     }
 
     //Enviar datos a la BD
@@ -114,26 +113,26 @@ export const addNewPatient = async (req, res) => {
         const pool = await getConnection()
 
         await pool.request()
-        .input('Run', sql.Int, Run)
-        .input('EdadIngreso', sql.Int, EdadIngreso)
-        .input('FechaIPD', sql.DateTime, FechaIPD)
-        .input('FechaSolicitud', sql.DateTime, FechaSolicitud)
-        .input('FechaIngreso', sql.DateTime, FechaIngreso)
-        .input('EvaIngreso', sql.VarChar, EvaIngreso)
-        .input('PsIngreso', sql.VarChar, PsIngreso)
-        .input('Diagnostico', sql.VarChar, Diagnostico)
-        .input('MedicoDeriva', sql.VarChar, MedicoDeriva)
-        .input('MedicoIngresa', sql.VarChar, MedicoIngresa)
-        .input('PacientePresente', sql.VarChar, PacientePresente)
-        .input('Conocimiento', sql.VarChar, Conocimiento)
-        .input('Comite', sql.VarChar, Comite)
-        .input('AnalgesiaPrevia', sql.VarChar, AnalgesiaPrevia)
-        .input('LugarIngreso', sql.VarChar, LugarIngreso)
-        .input('UsuarioOncologico', sql.VarChar, UsuarioOncologico)
-        .input('Domicilio', sql.VarChar, Domicilio)
-        .input('Observaciones', sql.VarChar, Observaciones)
-        .query(queries.addNewPatient)
-    
+            .input('Run', sql.Int, Run)
+            .input('EdadIngreso', sql.Int, EdadIngreso)
+            .input('FechaIPD', sql.DateTime, FechaIPD)
+            .input('FechaSolicitud', sql.DateTime, FechaSolicitud)
+            .input('FechaIngreso', sql.DateTime, FechaIngreso)
+            .input('EvaIngreso', sql.VarChar, EvaIngreso)
+            .input('PsIngreso', sql.VarChar, PsIngreso)
+            .input('Diagnostico', sql.VarChar, Diagnostico)
+            .input('MedicoDeriva', sql.VarChar, MedicoDeriva)
+            .input('MedicoIngresa', sql.VarChar, MedicoIngresa)
+            .input('PacientePresente', sql.VarChar, PacientePresente)
+            .input('Conocimiento', sql.VarChar, Conocimiento)
+            .input('Comite', sql.VarChar, Comite)
+            .input('AnalgesiaPrevia', sql.VarChar, AnalgesiaPrevia)
+            .input('LugarIngreso', sql.VarChar, LugarIngreso)
+            .input('UsuarioOncologico', sql.VarChar, UsuarioOncologico)
+            .input('Domicilio', sql.VarChar, Domicilio)
+            .input('Observaciones', sql.VarChar, Observaciones)
+            .query(queries.addNewPatient)
+
         console.log(Run, EdadIngreso, FechaIPD, FechaSolicitud, FechaIngreso, EvaIngreso, PsIngreso, Diagnostico, MedicoDeriva, MedicoIngresa, PacientePresente, Conocimiento, Comite, AnalgesiaPrevia, LugarIngreso, UsuarioOncologico, Domicilio, Observaciones)
         //res.json({message: 'paciente creado con éxito'})
         res.redirect('/patients')
@@ -150,9 +149,9 @@ export const deleteUser = async (req, res) => {
     try {
         const pool = await getConnection();
         await pool
-        .request()
-        .input('runUser', runUser)
-        .query(queries.deleteUser)
+            .request()
+            .input('runUser', runUser)
+            .query(queries.deleteUser)
         res.redirect('/register')
     } catch (error) {
         res.status(500)
@@ -164,18 +163,18 @@ export const deleteUser = async (req, res) => {
 export const createNewControl = async (req, res) => {
     console.log(req.body)
     const { runControl
-    , tipoControl
-    , observacionControl
-    , fechaControl
-    , runResponsable} = req.body
-    
-    if(runControl == null || 
+        , tipoControl
+        , observacionControl
+        , fechaControl
+        , runResponsable } = req.body
+
+    if (runControl == null ||
         tipoControl == null
         || observacionControl == null
         || fechaControl == null
         || runResponsable == null
-        ){
-        return res.status(400).json({message: 'Bad Request: Please fill all fields'})
+    ) {
+        return res.status(400).json({ message: 'Bad Request: Please fill all fields' })
     }
 
     //Enviar datos a la BD
@@ -183,13 +182,13 @@ export const createNewControl = async (req, res) => {
         const pool = await getConnection()
 
         await pool.request()
-        .input('Run', sql.Int, runControl)
-        .input('TipoControl', sql.VarChar, tipoControl)
-        .input('Observaciones', sql.VarChar, observacionControl)
-        .input('FechaControl', sql.DateTime, fechaControl)
-        .input('RunResponsable', sql.Int, runResponsable)
-        .query(queries.addNewControl)
-    
+            .input('Run', sql.Int, runControl)
+            .input('TipoControl', sql.VarChar, tipoControl)
+            .input('Observaciones', sql.VarChar, observacionControl)
+            .input('FechaControl', sql.DateTime, fechaControl)
+            .input('RunResponsable', sql.Int, runResponsable)
+            .query(queries.addNewControl)
+
         console.log(runControl, tipoControl, observacionControl, fechaControl, runResponsable)
         res.redirect('/patients')
     } catch (error) {
@@ -201,33 +200,33 @@ export const createNewControl = async (req, res) => {
 export const patientDischarge = async (req, res) => {
     console.log(req.body)
     const { runAltaPaciente, tipoEstado, motivoAlta } = req.body
-    
-    if(runAltaPaciente == null || tipoEstado == null || motivoAlta == null){
-        return res.status(400).json({message: 'Bad Request: Please fill all fields'})
-    }else{
-    //Enviar datos a la BD
-    try {
-        const pool = await getConnection()
 
-        if (tipoEstado != 2) {
-            //ACTUALIZA COLUMNA Estado 1 o 0
-            await pool.request()
-            .input('Run', sql.Int, runAltaPaciente)
-            .input('tipoEstado', sql.Int, tipoEstado)
-            .input('motivoAlta', sql.VarChar, motivoAlta)
-            .query(queries.setpatientDischarge)     
-            res.redirect('/patients')
-        } else {
-            //ACTUALIZA COLUMNA Fallecido A 1
-            await pool.request()
-            .input('Run', sql.Int, runAltaPaciente)
-            .query(queries.setpatientDeceased)       
-            res.redirect('/patients')
+    if (runAltaPaciente == null || tipoEstado == null || motivoAlta == null) {
+        return res.status(400).json({ message: 'Bad Request: Please fill all fields' })
+    } else {
+        //Enviar datos a la BD
+        try {
+            const pool = await getConnection()
+
+            if (tipoEstado != 2) {
+                //ACTUALIZA COLUMNA Estado 1 o 0
+                await pool.request()
+                    .input('Run', sql.Int, runAltaPaciente)
+                    .input('tipoEstado', sql.Int, tipoEstado)
+                    .input('motivoAlta', sql.VarChar, motivoAlta)
+                    .query(queries.setpatientDischarge)
+                res.redirect('/patients')
+            } else {
+                //ACTUALIZA COLUMNA Fallecido A 1
+                await pool.request()
+                    .input('Run', sql.Int, runAltaPaciente)
+                    .query(queries.setpatientDeceased)
+                res.redirect('/patients')
+            }
+        } catch (error) {
+            res.status(500)
+            res.send(error.message)
         }
-    } catch (error) {
-        res.status(500)
-        res.send(error.message)
-    }
     }
 
 }
@@ -238,16 +237,18 @@ export const registerUser = async (req, res) => {
         const pool = await getConnection();
         const resultUsers = await pool.request().query(queries.getAllUsers)
         const datadataUsers = resultUsers.recordset
-    
-        if(req.session.loggedin == true){
-            res.render('register', {'dataUsers': datadataUsers, 'error': '', 
-            'dataUser': {'userName': req.session.name, 'runResponsable': req.session.runResponsable}})
-        }else{
+
+        if (req.session.loggedin == true) {
+            res.render('register', {
+                'dataUsers': datadataUsers, 'error': '',
+                'dataUser': { 'userName': req.session.name, 'runResponsable': req.session.runResponsable }
+            })
+        } else {
             res.redirect('/login')
         }
     } catch (error) {
         res.status(500)
-        res.send(error.message)        
+        res.send(error.message)
     }
 
 }
@@ -257,42 +258,42 @@ export const storeUser = async (req, res) => {
     const data = req.body
     const pool = await getConnection();
     const passwordHash = await bcrypt.hash(data.password, 12)
-    
-    if(data.run == null || 
+
+    if (data.run == null ||
         data.name == null
         || data.password == null
         || data.email == null
-        ){
-        return res.status(400).json({message: 'Bad Request: Please fill all fields'})
+    ) {
+        return res.status(400).json({ message: 'Bad Request: Please fill all fields' })
     }
 
 
     const resultUser = await pool.request()
-    .input('Email', data.email)
-    .query(queries.getUserbyEmail)
+        .input('Email', data.email)
+        .query(queries.getUserbyEmail)
 
     const quantityUser = Object.keys(resultUser.recordset).length
     console.log(quantityUser)
 
     if (quantityUser > 0) {
         console.log(quantityUser)
-        res.render('register', {'error': 'El usuario ya existe'})
+        res.render('register', { 'error': 'El usuario ya existe' })
     } else {
-    try {
-        await pool.request()
-        .input('Run', sql.Int, data.run)
-        .input('Name', sql.VarChar, data.name)
-        .input('Email', sql.VarChar, data.email)
-        .input('Password', passwordHash)
-        .query(queries.storeUser)
-    
-        res.redirect('/login')  
+        try {
+            await pool.request()
+                .input('Run', sql.Int, data.run)
+                .input('Name', sql.VarChar, data.name)
+                .input('Email', sql.VarChar, data.email)
+                .input('Password', passwordHash)
+                .query(queries.storeUser)
 
-} catch (error) {
-    res.status(500)
-    res.send(error.message)
-}
-    }    
+            res.redirect('/login')
+
+        } catch (error) {
+            res.status(500)
+            res.send(error.message)
+        }
+    }
 }
 
 
@@ -302,59 +303,59 @@ export const updateUser = async (req, res) => {
     console.log(req.body)
     const pool = await getConnection();
     const passwordHash = await bcrypt.hash(data.passwordModalUsuario, 12)
-    
-    if(data.runModalUsuario == null || 
+
+    if (data.runModalUsuario == null ||
         data.nameModalUsuario == null
         || data.passwordModalUsuario == null
         || data.estadoModalUsuario == null
         || data.emailModalUsuario == null
-        ){
-        return res.status(400).json({message: 'Bad Request: Please fill all fields'})
+    ) {
+        return res.status(400).json({ message: 'Bad Request: Please fill all fields' })
     }
 
     try {
         await pool.request()
-        .input('Run', sql.Int, data.runModalUsuario)
-        .input('Name', sql.VarChar, data.nameModalUsuario)
-        .input('Email', sql.VarChar, data.emailModalUsuario)
-        .input('IdState', sql.Int, data.estadoModalUsuario)
-        .input('Password', passwordHash)
-        .query(queries.updateUser)
-    
-        res.redirect('/register')  
+            .input('Run', sql.Int, data.runModalUsuario)
+            .input('Name', sql.VarChar, data.nameModalUsuario)
+            .input('Email', sql.VarChar, data.emailModalUsuario)
+            .input('IdState', sql.Int, data.estadoModalUsuario)
+            .input('Password', passwordHash)
+            .query(queries.updateUser)
+
+        res.redirect('/register')
 
     } catch (error) {
         res.status(500)
         res.send(error.message)
-    } 
+    }
 }
 
 
-export const login = async (req, res) =>{
-    if(req.session.loggedin != true){
-        res.render('login', {'error': ''}) 
-    }else{
+export const login = async (req, res) => {
+    if (req.session.loggedin != true) {
+        res.render('login', { 'error': '' })
+    } else {
         res.redirect('/')
     }
-    
+
 }
 
-export const auth = async (req, res) =>{
+export const auth = async (req, res) => {
     const data = req.body
     const pool = await getConnection();
 
     const resultUser = await pool.request()
-    .input('Email', data.email)
-    .query(queries.getUserbyEmail)
+        .input('Email', data.email)
+        .query(queries.getUserbyEmail)
 
     //console.log(resultUser.recordset[0].password)
-    
+
     const quantityUser = Object.keys(resultUser.recordset).length
     if (quantityUser > 0) {
-        bcrypt.compare(data.password, resultUser.recordset[0].password, (err, isMatch)=>{
-            if(isMatch == false){
-                res.render('login', {'error': 'Contraseña incorrecta'})
-            }else{
+        bcrypt.compare(data.password, resultUser.recordset[0].password, (err, isMatch) => {
+            if (isMatch == false) {
+                res.render('login', { 'error': 'Contraseña incorrecta' })
+            } else {
                 req.session.loggedin = true
                 req.session.name = resultUser.recordset[0].name
                 req.session.runResponsable = resultUser.recordset[0].run
@@ -362,15 +363,15 @@ export const auth = async (req, res) =>{
             }
         })
     } else {
-        res.render('login', {'error': 'No existe el usuario'})
+        res.render('login', { 'error': 'No existe el usuario' })
     }
 }
 
-export const logout = async(req, res) => {
-    if(req.session.loggedin == true){
+export const logout = async (req, res) => {
+    if (req.session.loggedin == true) {
         req.session.destroy()
     }
-        res.redirect('/login')
+    res.redirect('/login')
 }
 
 export const index = async (req, res) => {
@@ -381,18 +382,19 @@ export const index = async (req, res) => {
     const resultQuantityControlsByDate = await pool.request().query(queries.getQuantityControlsByDate)
 
     const dataTotalsDashboard = resultTotalsDashboard.recordset[0]
-    const dataQuantityControls =  resultQuantityControls.recordset
-    const dataLastControls =  resultLastControls.recordset
-    const dataQuantityControlsByDate =  resultQuantityControlsByDate.recordset
+    const dataQuantityControls = resultQuantityControls.recordset
+    const dataLastControls = resultLastControls.recordset
+    const dataQuantityControlsByDate = resultQuantityControlsByDate.recordset
 
-    if(req.session.loggedin == true){
-        res.render('home', {'dataTotalsDashboard': dataTotalsDashboard, 
-        'dataQuantityControls': dataQuantityControls, 
-        'dataLastControls': dataLastControls, 
-        'dataQuantityControlsByDate': dataQuantityControlsByDate, 
-        'dataUser': {'userName': req.session.name, 'runResponsable': req.session.runResponsable}
-    })
-    }else{
+    if (req.session.loggedin == true) {
+        res.render('home', {
+            'dataTotalsDashboard': dataTotalsDashboard,
+            'dataQuantityControls': dataQuantityControls,
+            'dataLastControls': dataLastControls,
+            'dataQuantityControlsByDate': dataQuantityControlsByDate,
+            'dataUser': { 'userName': req.session.name, 'runResponsable': req.session.runResponsable }
+        })
+    } else {
         res.redirect('/login')
     }
 }
@@ -405,12 +407,13 @@ export const patients = async (req, res) => {
     const data = result.recordset
     const dataDiagnosticos = resultDiagnosticos.recordset
 
-    if(req.session.loggedin == true){
-        res.render('patients', {'data': data, 
-        'dataDiagnosticos': dataDiagnosticos,
-        'dataUser': {'userName': req.session.name, 'runResponsable': req.session.runResponsable}
-    })
-    }else{
+    if (req.session.loggedin == true) {
+        res.render('patients', {
+            'data': data,
+            'dataDiagnosticos': dataDiagnosticos,
+            'dataUser': { 'userName': req.session.name, 'runResponsable': req.session.runResponsable }
+        })
+    } else {
         res.redirect('/login')
     }
 }
@@ -419,9 +422,9 @@ export const updatePatientStateByRun = async (req, res) => {
     const { runPatient } = req.params;
     const pool = await getConnection();
     const result = await pool
-    .request()
-    .input('Run', runPatient)
-    .query(queries.updatePatientStateByRun)
+        .request()
+        .input('Run', runPatient)
+        .query(queries.updatePatientStateByRun)
     res.redirect('/patients')
 }
 
@@ -430,16 +433,18 @@ export const reports = async (req, res) => {
         const pool = await getConnection();
         const resultReportControls = await pool.request().query(queries.getAllControls)
         const dataReportControls = resultReportControls.recordset
-    
-        if(req.session.loggedin == true){
-            res.render('reports', {'dataReportControls': dataReportControls, 'error': '', 
-            'dataUser': {'userName': req.session.name, 'runResponsable': req.session.runResponsable}})
-        }else{
+
+        if (req.session.loggedin == true) {
+            res.render('reports', {
+                'dataReportControls': dataReportControls, 'error': '',
+                'dataUser': { 'userName': req.session.name, 'runResponsable': req.session.runResponsable }
+            })
+        } else {
             res.redirect('/login')
         }
     } catch (error) {
         res.status(500)
-        res.send(error.message)        
+        res.send(error.message)
     }
 
 }
