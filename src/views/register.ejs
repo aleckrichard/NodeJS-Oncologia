@@ -21,6 +21,7 @@
                   <th>Nombres</th>
                   <th>Email</th>
                   <th>Estado</th>
+                  <th>Acciones</th>
               </tr>
           </thead>
       <tbody>
@@ -31,6 +32,14 @@
                     <td><%= dataUsers[i].name %></td>
                     <td><%= dataUsers[i].email %></td>
                     <td><%= dataUsers[i].estado %></td>
+                    <td>
+                      <button type="button" class="btn btn-warning btn-sm" onclick="modalAccionUsuario('<%= dataUsers[i].run %>','<%= dataUsers[i].name %>', '<%= dataUsers[i].email %>', '<%= dataUsers[i].estado %>', 1)">
+                          Actualizar
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="modalAccionUsuario('<%= dataUsers[i].run %>','<%= dataUsers[i].name %>', '<%= dataUsers[i].email %>', '<%= dataUsers[i].estado %>', 2)">
+                          Eliminar
+                      </button>
+                  </td>
                   </tr>
                   <% } %>
           <%}%>
@@ -46,7 +55,7 @@
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Crear Nuevo Usuario</h5>
+              <h5 class="modal-title" id="exampleModalLabel">Crear Usuario</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -82,6 +91,79 @@
         <%= error %>
       <%}%></div>
 
+            <!-- Modal  Actualizar Usuario-->
+            <div class="modal fade" id="modalActualizarUsuario" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Actualizar Usuario</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form action="/updateUser" method="post">
+                      <div class="row">
+                          <div class="mb-3 col-md-12">
+                              <label for="exampleInputEmail1" class="form-label">Run</label>
+                              <input type="number" class="form-control" name="runModalUsuario" id="runModalUsuario" readonly>
+                          </div>
+                          <div class="mb-3 col-md-12">
+                            <label for="name">Nombres</label>
+                            <input type="text" class="form-control" id="nameModalUsuario" name="nameModalUsuario" required>
+                          </div>
+                        <div class="mb-3 col-md-12">
+                          <label for="email">Email</label>
+                          <input type="email" class="form-control" id="emailModalUsuario" name="emailModalUsuario" required>
+                        </div>
+                        <div class="mb-3 col-md-12">
+                          <label for="email">Estado</label>
+                          <!-- <input type="text" class="form-control" id="estadoModalUsuario" name="estadoModalUsuario" required> -->
+                          <select name="estadoModalUsuario" id="estadoModalUsuario" class="form-control" required>
+                            <option value="">Seleccione</option>
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                          </select>
+                        </div>
+                        <div class="mb-3 col-md-12">
+                          <label for="password">Contraseña</label>
+                          <input type="text" class="form-control" id="passwordModalUsuario" name="passwordModalUsuario" required>
+                        </div>
+                      </div>            
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-danger">Guardar</button>
+                  </div>
+                  </form>          
+                </div>
+              </div>
+            </div>
+            <div id='status' class="invisible"><% if(error != "") { %>
+              <%= error %>
+            <%}%></div>
+
+
+                    <!-- Modal  Eliminar Usuario-->
+                    <div class="modal fade" id="modalEliminarUsuario" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Eliminar Usuario</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body" id="divMensajeEliminar">
+
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <a href="" id="linkEliminar" class="btn btn-danger">Eliminar</a>
+                          </div>         
+                        </div>
+                      </div>
+                    </div>
+                    <div id='status' class="invisible"><% if(error != "") { %>
+                      <%= error %>
+                    <%}%></div>
+
   <script>
 
 $('#run').keypress(function (e) {    
@@ -98,6 +180,24 @@ $('#run').keypress(function (e) {
           alertify.error($('div#status').text());
         }
       
+  </script>
+
+  <script>
+    function modalAccionUsuario(run, name, email, estado, accion){
+
+      if (accion == 1) {
+        $("#runModalUsuario").val(run);
+        $("#nameModalUsuario").val(name);
+        $("#emailModalUsuario").val(email);
+        $('#modalActualizarUsuario').modal('show');
+      } else {
+        $("#linkEliminar").attr("href", "/deleteUser/"+run)
+        $("#divMensajeEliminar").html('Está seguro/a que desea eliminar el usuario <b>' +  name + ' '+  run + '</b>. Si lo elimina, toda la información registrada por éste no se reflejará en el sistema.' )
+        
+        $('#modalEliminarUsuario').modal('show');
+      }
+  }
+        
   </script>
 
   <%- include('./partials/_footer'); %>

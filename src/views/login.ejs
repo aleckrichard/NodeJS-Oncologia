@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Sistema de Cuidados Paliativos | Salud Digital SSO</title>
 <!-- Font Awesome -->
 <link
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
@@ -27,8 +27,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/alertify.min.js" integrity="sha512-JnjG+Wt53GspUQXQhc+c4j8SBERsgJAoHeehagKHlxQN+MtCCmFDghX9/AcbkkNRZptyZU4zC8utK59M5L45Iw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/css/alertify.min.css" integrity="sha512-IXuoq1aFd2wXs4NqGskwX2Vb+I8UJ+tGJEu/Dc0zwLNKeQ7CW3Sr6v0yU3z5OQWe3eScVIkER4J9L7byrgR/fA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+<!-- Toast -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css">
 </head>
-<body>
+<body style="background-size: cover;
+background: url(https://saluddigitalsso.cl/images/sso.jpg) no-repeat center center fixed;
+height: 10%; ">
   <style>
 .divider:after,
 .divider:before {
@@ -50,65 +55,65 @@ height: 100%;
 <section class="vh-100">
   <div class="container-fluid h-custom">
     <div class="row d-flex justify-content-center align-items-center h-100">
-      <div class="col-md-9 col-lg-6 col-xl-5">
+      <!-- <div class="col-md-9 col-lg-6 col-xl-5">
         <img src="https://saluddigitalsso.cl/images/SaludDigital.webp"
           class="img-fluid" alt="Sample image">
-      </div>
-      <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
-        <form action="/login" method="post">
-          <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start mb-2">
-            <p class="lead fw-normal mb-0 me-3 text-center">Iniciar Sesión en <b>Sistema de Cuidados Paliativos</b></p>
-          </div>
-
-          <!-- Email input -->
-          <div class="form-outline mb-4">
-            <input type="email" id="form3Example3" class="form-control form-control-lg" name="email" required
-              placeholder="Ingrese su Email" />
-            <label class="form-label" for="form3Example3">Email address</label>
-          </div>
-
-          <!-- Password input -->
-          <div class="form-outline mb-3">
-            <input type="password" id="form3Example4" class="form-control form-control-lg" name="password" required
-              placeholder="Contraseña" />
-            <label class="form-label" for="form3Example4">Password</label>
-          </div>
-
-
-          <div class="text-center text-lg-start mt-4 pt-2">
-            <button type="submit" class="btn btn-primary btn-lg"
-              style="padding-left: 2.5rem; padding-right: 2.5rem;">Iniciar Sesión</button>
-            <p class="small fw-bold mt-2 pt-1 mb-0">¿No tienes una cuenta? <a href="/register"
-                class="link-danger">Registrarse</a></p>
-          </div>
-        </form> 
+      </div> -->
+      <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1 card">
+        <div class="card-body">
+          <form action="/login" method="post">
+            <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start mb-5">
+              <img src="https://saluddigitalsso.cl/images/logo_sso.jpg" alt="" height="100px" width="auto">
+              <p class="lead fw-normal mb-0 me-3 text-center">Iniciar Sesión en <b>Sistema de Cuidados Paliativos</b></p>
+            </div>
+  
+            <!-- Email input -->
+            <div class="form-outline mb-4">
+              <input type="email" id="form3Example3" class="form-control form-control-lg" name="email" required
+                placeholder="Ingrese su Email" />
+              <label class="form-label" for="form3Example3">Email address</label>
+            </div>
+  
+            <!-- Password input -->
+            <div class="form-outline mb-3">
+              <input type="password" id="form3Example4" class="form-control form-control-lg" name="password" required
+                placeholder="Contraseña" />
+              <label class="form-label" for="form3Example4">Password</label>
+            </div>
+  
+  
+            <div class="text-center text-lg-start mt-4 pt-2">
+              <button type="submit" class="btn btn-primary btn-lg"
+                style="padding-left: 2.5rem; padding-right: 2.5rem;">Iniciar Sesión</button>
+            </div>
+          </form> 
+        </div>
         <div id='status' class="invisible"><% if(error != "") { %>
           <%= error %>
         <%}%></div>
       </div>
     </div>
   </div>
-  <div
-    class="d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5 bg-primary">
+  <div class="d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5 " style="background-color: ;#009688">
     <!-- Copyright -->
     <div class="text-white mb-3 mb-md-0">
-     <a href="https://saluddigitalsso.cl" target="_blank" class="text-white">Salud Digital SSO 2022</a>
+     <a href="https://saluddigitalsso.cl" target="_blank" class="text-white"><h5>Salud Digital SSO 2022</h5></a>
     </div>
     <!-- Copyright -->
 
     <!-- Right -->
     <div>
       <a href="https://es-la.facebook.com/SsaludOsorno" target="_blank" class="text-white me-4">
-        <i class="fab fa-facebook-f"></i>
+        <i class="fab fa-facebook-f fa-2x"></i>
       </a>
       <a href="https://www.instagram.com/ssaludosorno/?hl=es" target="_blank" class="text-white me-4">
-        <i class="fab fa-instagram"></i>
+        <i class="fab fa-instagram fa-2x"></i>
       </a>
       <a href="https://twitter.com/SSaludOsorno" target="_blank" class="text-white me-4">
-        <i class="fab fa-twitter"></i>
+        <i class="fab fa-twitter fa-2x"></i>
       </a>
       <a href="https://www.linkedin.com/company/servicio-de-salud-osorno" target="_blank" class="text-white me-4">
-        <i class="fab fa-linkedin-in"></i>
+        <i class="fab fa-linkedin-in fa-2x"></i>
       </a>
     </div>
     <!-- Right -->
@@ -121,7 +126,8 @@ src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/4.2.0/mdb.min.js"
 <script>
   if($('div#status').text()!='')
       {
-        alertify.error($('div#status').text());
+        //alertify.error($('div#status').text());
+        toastr.error($('div#status').text())
       }
     
 </script>

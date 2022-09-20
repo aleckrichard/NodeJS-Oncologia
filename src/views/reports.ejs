@@ -1,0 +1,81 @@
+<%- include('./partials/_header'); %>
+<script src="https://cdn.datatables.net/fixedheader/3.2.2/js/dataTables.fixedHeader.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap.min.js"></script>
+
+
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+
+
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.2.2/css/fixedHeader.bootstrap.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css" />
+  <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <div
+      class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+      <h4>Listado de Controles</h4>
+    </div>
+
+    <div class="table-responsive">
+      <table id="tablaControles" class="table table-striped table-sm table-hover">
+          <thead>
+              <tr>
+                  <th>Run</th>
+                  <th>Nombres</th>
+                  <th>Edad Control</th>
+                  <th>Tipo Control</th>
+                  <th>FechaControl</th>
+                  <th>Responsable</th>
+                  <th>Observaciones</th>
+              </tr>
+          </thead>
+      <tbody>
+          <% if(dataReportControls) { %>
+              <% for(var i=0; i < dataReportControls.length; i++) { %>
+                  <tr>
+                    <td><%= dataReportControls[i].Run %></td>
+                    <td><%= dataReportControls[i].Nombres %></td>
+                    <td><%= dataReportControls[i].EdadControl %></td>
+                    <td><%= dataReportControls[i].TipoControl %></td>
+                    <td><%= dataReportControls[i].FechaControl %></td>
+                    <td><%= dataReportControls[i].Responsable %></td>
+                    <td><%= dataReportControls[i].Observaciones %></td>
+                  </tr>
+                  <% } %>
+          <%}%>
+      </tbody>
+    </table>
+  </div>
+  </main>
+
+  <script>
+    $(document).ready(function () {
+        $('#tablaControles').DataTable({
+            dom: 'lBfrtip',
+            "order": [[0, "asc"]],
+            "lengthMenu": [[10, 25, 100, -1], [10, 25, 100, "Todo"]],
+            'iDisplayLength': 10,
+            buttons: [
+                { extend: 'excel', text: 'Exportar a Excel' },
+                { extend: 'print', text: 'Imprimir' }
+            ],
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json'
+            },
+            responsive: true,
+        });
+
+        new $.fn.dataTable.FixedHeader(table);
+
+        $("button").last().addClass("selected highlight");
+    });
+
+</script>
+  <%- include('./partials/_footer'); %>

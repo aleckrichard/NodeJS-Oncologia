@@ -21,25 +21,30 @@ export const profile = async (req, res) => {
 
     const dataControls = resultControls.recordset
     const data = result.recordset[0]
-    console.log(dataControls)
     // res.render('pages/patients', {'data': data})
- res.render('profile', {'data': data, 'dataControls': dataControls})
+ res.render('profile', {'data': data, 'dataControls': dataControls,
+ 'dataUser': {'userName': req.session.name, 'runResponsable': req.session.runResponsable}})
 }
 
 export const validatePatient = async (req, res) => {
     const { runPatient } = req.params;
     const pool = await getConnection();
-    const result = await pool
-    .request()
-    .input('runPatient', runPatient)
-    .query(queries.getPatientPhoenixByRun)
-    const data = result.recordset[0]
-    if (data) {
-        console.log(data)
-        res.send(data)
-    }else{
-        console.log("No ha datos")
-    res.json({message: 'resultado'})
+    try {
+        const result = await pool
+        .request()
+        .input('runPatient', runPatient)
+        .query(queries.getPatientPhoenixByRun)
+        const data = result.recordset[0]
+        if (data) {
+            console.log(data)
+            res.send(data)
+        }else{
+            console.log("No hay datos")
+        res.json({message: 'error'})
+        }
+    } catch (error) {        
+        res.status(500)
+        res.redirect('/patients')
     }
     
 }
@@ -131,22 +136,29 @@ export const addNewPatient = async (req, res) => {
     
         console.log(Run, EdadIngreso, FechaIPD, FechaSolicitud, FechaIngreso, EvaIngreso, PsIngreso, Diagnostico, MedicoDeriva, MedicoIngresa, PacientePresente, Conocimiento, Comite, AnalgesiaPrevia, LugarIngreso, UsuarioOncologico, Domicilio, Observaciones)
         //res.json({message: 'paciente creado con éxito'})
-        res.redirect('/')
+        res.redirect('/patients')
     } catch (error) {
         res.status(500)
-        res.send(error.message)
+        res.redirect('/patients')
+        //res.send(error.message)
     }
 }
 
 
-export const deletePatient = async (req, res) => {
-    const { IdCuidadosPaliativos } = req.params;
-    const pool = await getConnection();
-    const result = await pool
-    .request()
-    .input('IdCuidadosPaliativos', IdCuidadosPaliativos)
-    .query(queries.deletePatient)
-    res.redirect('/patients')
+export const deleteUser = async (req, res) => {
+    const { runUser } = req.params;
+    try {
+        const pool = await getConnection();
+        await pool
+        .request()
+        .input('runUser', runUser)
+        .query(queries.deleteUser)
+        res.redirect('/register')
+    } catch (error) {
+        res.status(500)
+        res.send(error.message)
+    }
+
 }
 
 export const createNewControl = async (req, res) => {
@@ -220,22 +232,27 @@ export const patientDischarge = async (req, res) => {
 
 }
 
-
+//Lista los usuarios del sistema mediante GET
 export const registerUser = async (req, res) => {
-    const pool = await getConnection();
-    const resultUsers = await pool.request().query(queries.getAllUsers)
-
-    const datadataUsers = resultUsers.recordset
-
-    if(req.session.loggedin == true){
-        res.render('register', {'dataUsers': datadataUsers, 'error': ''})
-    }else{
-        res.redirect('/login')
+    try {
+        const pool = await getConnection();
+        const resultUsers = await pool.request().query(queries.getAllUsers)
+        const datadataUsers = resultUsers.recordset
+    
+        if(req.session.loggedin == true){
+            res.render('register', {'dataUsers': datadataUsers, 'error': '', 
+            'dataUser': {'userName': req.session.name, 'runResponsable': req.session.runResponsable}})
+        }else{
+            res.redirect('/login')
+        }
+    } catch (error) {
+        res.status(500)
+        res.send(error.message)        
     }
 
-    //  res.render('register', {'error': ''}) 
 }
 
+//Crea un nuevo usuario en el sistema mediante POST
 export const storeUser = async (req, res) => {
     const data = req.body
     const pool = await getConnection();
@@ -278,6 +295,41 @@ export const storeUser = async (req, res) => {
     }    
 }
 
+
+//Actualiza un usuario del sistema mediante POST
+export const updateUser = async (req, res) => {
+    const data = req.body
+    console.log(req.body)
+    const pool = await getConnection();
+    const passwordHash = await bcrypt.hash(data.passwordModalUsuario, 12)
+    
+    if(data.runModalUsuario == null || 
+        data.nameModalUsuario == null
+        || data.passwordModalUsuario == null
+        || data.estadoModalUsuario == null
+        || data.emailModalUsuario == null
+        ){
+        return res.status(400).json({message: 'Bad Request: Please fill all fields'})
+    }
+
+    try {
+        await pool.request()
+        .input('Run', sql.Int, data.runModalUsuario)
+        .input('Name', sql.VarChar, data.nameModalUsuario)
+        .input('Email', sql.VarChar, data.emailModalUsuario)
+        .input('IdState', sql.Int, data.estadoModalUsuario)
+        .input('Password', passwordHash)
+        .query(queries.updateUser)
+    
+        res.redirect('/register')  
+
+    } catch (error) {
+        res.status(500)
+        res.send(error.message)
+    } 
+}
+
+
 export const login = async (req, res) =>{
     if(req.session.loggedin != true){
         res.render('login', {'error': ''}) 
@@ -305,6 +357,7 @@ export const auth = async (req, res) =>{
             }else{
                 req.session.loggedin = true
                 req.session.name = resultUser.recordset[0].name
+                req.session.runResponsable = resultUser.recordset[0].run
                 res.redirect('/')
             }
         })
@@ -333,7 +386,12 @@ export const index = async (req, res) => {
     const dataQuantityControlsByDate =  resultQuantityControlsByDate.recordset
 
     if(req.session.loggedin == true){
-        res.render('home', {'dataTotalsDashboard': dataTotalsDashboard, 'dataQuantityControls': dataQuantityControls, 'dataLastControls': dataLastControls, 'dataQuantityControlsByDate': dataQuantityControlsByDate, 'userName': req.session.name})
+        res.render('home', {'dataTotalsDashboard': dataTotalsDashboard, 
+        'dataQuantityControls': dataQuantityControls, 
+        'dataLastControls': dataLastControls, 
+        'dataQuantityControlsByDate': dataQuantityControlsByDate, 
+        'dataUser': {'userName': req.session.name, 'runResponsable': req.session.runResponsable}
+    })
     }else{
         res.redirect('/login')
     }
@@ -348,7 +406,10 @@ export const patients = async (req, res) => {
     const dataDiagnosticos = resultDiagnosticos.recordset
 
     if(req.session.loggedin == true){
-        res.render('patients', {'data': data, 'dataDiagnosticos': dataDiagnosticos, 'userName': req.session.name})
+        res.render('patients', {'data': data, 
+        'dataDiagnosticos': dataDiagnosticos,
+        'dataUser': {'userName': req.session.name, 'runResponsable': req.session.runResponsable}
+    })
     }else{
         res.redirect('/login')
     }
@@ -362,5 +423,24 @@ export const updatePatientStateByRun = async (req, res) => {
     .input('Run', runPatient)
     .query(queries.updatePatientStateByRun)
     res.redirect('/patients')
+}
+
+export const reports = async (req, res) => {
+    try {
+        const pool = await getConnection();
+        const resultReportControls = await pool.request().query(queries.getAllControls)
+        const dataReportControls = resultReportControls.recordset
+    
+        if(req.session.loggedin == true){
+            res.render('reports', {'dataReportControls': dataReportControls, 'error': '', 
+            'dataUser': {'userName': req.session.name, 'runResponsable': req.session.runResponsable}})
+        }else{
+            res.redirect('/login')
+        }
+    } catch (error) {
+        res.status(500)
+        res.send(error.message)        
+    }
+
 }
 

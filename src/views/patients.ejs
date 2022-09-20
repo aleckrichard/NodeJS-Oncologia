@@ -49,7 +49,7 @@
                     <%}%>                                  
                   
                     <% if (data[i].EstadoFallecido == "Fallecido") {%>
-                        <td><i class="text-danger fa-solid fa-cross"></i></td>          
+                        <td><i class="text-danger fa-solid fa-cross"></i> Fallecido</td>          
                     <%} else { %>
                         <td></td>
                         <%}%>                
@@ -108,7 +108,12 @@
                 </div>
                 <div class="mb-3 col-md-4 divDatos">
                     <label for="exampleInputEmail1" class="form-label">Usuario Oncológico</label>
-                    <input type="text" class="form-control" name="UsuarioOncologico" placeholder="UsuarioOncologico" required>
+                    <select name="UsuarioOncologico" id="UsuarioOncologico" class="form-control"required>
+                        <option value="">Seleccione</option>
+                        <option>Si</option>
+                        <option>No</option>
+                        <option>No Determinado</option>
+                    </select>
                 </div>
                 <div class="mb-3 col-md-8 divDatos">
                     <label for="exampleInputEmail1" class="form-label">Domicilio</label>
@@ -116,7 +121,17 @@
                 </div>
                 <div class="mb-3 col-md-4 divDatos">
                     <label for="exampleInputEmail1" class="form-label">Lugar de Ingreso</label>
-                    <input type="text" class="form-control" name="LugarIngreso" placeholder="LugarIngreso" required>
+                    <select name="LugarIngreso" id="LugarIngreso" class="form-control"required>
+                        <option value="">Seleccione</option>
+                        <option>Box</option>
+                        <option>Casa</option>
+                        <option>Sala</option>
+                        <option>QMT</option>
+                        <option>TLM</option>
+                        <option>UEH</option>
+                        <option>NSP</option>
+                        <option>NC</option>
+                    </select>
                 </div>
                 <div class="mb-3 col-md-4 divDatos">
                     <label for="exampleInputEmail1" class="form-label">Fecha IPD</label>
@@ -132,11 +147,33 @@
                 </div>
                 <div class="mb-3 col-md-4 divDatos">
                     <label for="exampleInputEmail1" class="form-label">Eva Ingreso</label>
-                    <input type="text" class="form-control" name="EvaIngreso" placeholder="EvaIngreso" required>
+                    <select name="EvaIngreso" id="EvaIngreso" class="form-control"required>
+                        <option value="">Seleccione</option>
+                        <option>0</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                        <option>10</option>
+                        <option>No Determinado</option>
+                    </select>
                 </div>
                 <div class="mb-3 col-md-4 divDatos">
                     <label for="exampleInputEmail1" class="form-label">Ps Ingreso</label>
-                    <input type="text" class="form-control" name="PsIngreso" placeholder="PsIngreso" required>
+                    <select name="PsIngreso" id="PsIngreso" class="form-control"required>
+                        <option value="">Seleccione</option>
+                        <option>0</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>No Determinado</option>
+                    </select>
                 </div>
                 <div class="mb-3 col-md-4 divDatos">
                     <label for="exampleInputEmail1" class="form-label">Diagnóstico</label>
@@ -159,25 +196,45 @@
                 </div>
                 <div class="mb-3 col-md-4 divDatos">
                     <label for="exampleInputEmail1" class="form-label">Paciente Presente</label>
-                    <input type="text" class="form-control" name="PacientePresente" placeholder="PacientePresente" required>
+                    <select name="PacientePresente" id="PacientePresente" class="form-control"required>
+                        <option value="">Seleccione</option>
+                        <option>Si</option>
+                        <option>No</option>
+                        <option>No Determinado</option>
+                    </select>
                 </div>
                 <div class="mb-3 col-md-4 divDatos">
                     <label for="exampleInputEmail1" class="form-label">Conocimiento</label>
-                    <input type="text" class="form-control" name="Conocimiento" placeholder="Conocimiento" required>
+                    <select name="Conocimiento" id="Conocimiento" class="form-control"required>
+                        <option value="">Seleccione</option>
+                        <option>Si</option>
+                        <option>No</option>
+                        <option>No Determinado</option>
+                    </select>
                 </div>
                 <div class="mb-3 col-md-4 divDatos">
                     <label for="exampleInputEmail1" class="form-label">Comité</label>
-                    <input type="text" class="form-control" name="Comite" placeholder="Comite" required>
+                    <select name="Comite" id="Comite" class="form-control"required>
+                        <option value="">Seleccione</option>
+                        <option>Si</option>
+                        <option>No</option>
+                        <option>No Determinado</option>
+                    </select>
                 </div>
                 <div class="mb-3 col-md-4 divDatos">
                     <label for="exampleInputEmail1" class="form-label">Analgesia Previa</label>
-                    <input type="text" class="form-control" name="AnalgesiaPrevia" placeholder="AnalgesiaPrevia" required>
+                    <select name="AnalgesiaPrevia" id="AnalgesiaPrevia" class="form-control"required>
+                        <option value="">Seleccione</option>
+                        <option>Si</option>
+                        <option>No</option>
+                        <option>No Determinado</option>
+                    </select>
                 </div>
                 <div class="mb-3 col-md-12 divDatos">
                     <label for="exampleInputEmail1" class="form-label">Observaciones</label>
                     <textarea class="form-control" name="Observaciones" placeholder="Observaciones" required></textarea>
                 </div>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert" id="resultado">
+                <div class="alert alert-danger alert-dismissible fade show" id="divError">
                     <strong>No existe el paciente en la base de datos de Phoenix</strong>
                 </div>
             </div>            
@@ -290,6 +347,14 @@
                         </select>
                     </div>
                     <div class="form-group">
+                        <label for="exampleInputEmail1" class="form-label">Asiste</label>
+                        <select name="tipoControl" id="tipoControl" class="form-control" required>
+                            <option value="">Seleccione</option>
+                            <option>Si</option>
+                            <option>No</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label for="exampleInputEmail1" class="form-label">Fecha del Control</label>
                         <input type="date" name="fechaControl" id="fechaControl" class="form-control" required>
                     </div>
@@ -298,7 +363,7 @@
                         <textarea name="observacionControl" id="observacionControl" class="form-control" required></textarea>
                     </div>
                     <input type="text" name="runControl" id="runControl" class="form-control" hidden>
-                    <input type="text" name="runResponsable" id="runResponsable" class="form-control" value="17357806" hidden>
+                    <input type="text" name="runResponsable" id="runResponsable" class="form-control" value="<%= dataUser.runResponsable %>" hidden>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -332,7 +397,7 @@ function modalEliminar(IdCuidadosPaliativos, runPaciente, nombrePaciente){
 
 <script>
     $(document).ready(function(){        
-        $('#resultado').hide()
+        $('#divError').hide()
         $('.divDatos').hide()
 
         $('#Run').keypress(function (e) {    
@@ -352,9 +417,9 @@ function modalEliminar(IdCuidadosPaliativos, runPaciente, nombrePaciente){
                 success:function(data){
                     if (data.message == "error") {
                         $('.divDatos').hide()
-                        $('#resultado').show()
+                        $('#divError').show()
                     } else {
-                        $('#resultado').hide()
+                        $('#divError').hide()
                         $('.divDatos').show()
                         $('#Nombres').val(data.Nombres);
                         $('#Ficha').val(data.Ficha);
